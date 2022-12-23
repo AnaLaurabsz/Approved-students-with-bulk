@@ -1,13 +1,17 @@
 const pkg = require('./package.json');
 const server = require('./lib/server');
-const db = require('./lib/client/database');
+const db = require('./lib/commons/database');
+const { pollingManager } = require('./lib/managers');
+const { approveStudents } = require('./lib/services');
+const { logger } = require('./lib/logger');
 
 process.title = pkg.name;
 
 const shutdown = async () => {
-  console.info('Gracefully shutdown in progress');
+  logger.info('Gracefully shutdown in progress');
   await server.stop();
   await db.close();
+  pollingManager.stopPolling();
   process.exit(0);
 };
 
@@ -16,24 +20,27 @@ process
   .on('SIGINT', shutdown)
   .on('SIGHUP', shutdown)
   .on('uncaughtException', (err) => {
-    console.error('uncaughtException caught the error: ', err);
+    logger.error('uncaughtException caught the error: ', err);
     throw err;
   })
   .on('unhandledRejection', (err, promise) => {
-    console.error(`Unhandled Rejection at: Promise ${promise} reason: ${err}`);
+    logger.error(`Unhandled Rejection at: Promise ${promise} reason: ${err}`);
     throw err;
   })
   .on('exit', (code) => {
-    console.info(`Node process exit with code: ${code}`);
+    logger.info(`Node process exit with code: ${code}`);
   });
 
 (async () => {
+  const { approveService } = approveStudents;
+
   try {
     await db.connect();
     await server.start();
+    pollingManager.startPolling(approveService);
   } catch (err) {
-    console.error('[APP] initialization failed', err);
+    logger.error('[APP] initialization failed', err);
     throw err;
   }
-  console.info('[APP] initialized SUCCESSFULLY');
+  logger.info('[APP] initialized SUCCESSFULLY');
 })();

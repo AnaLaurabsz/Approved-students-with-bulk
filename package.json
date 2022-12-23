@@ -4,6 +4,7 @@
   "description": "Projeto com funcionalidades para estudarmos",
   "main": "index.js",
   "scripts": {
+    "lint": "eslint index.js lib  --ext .js",
     "test": "npm test",
     "start": "export NODE_ENV=dev && node index.js"
   },
@@ -11,9 +12,13 @@
   "dependencies": {
     "chance": "^1.1.9",
     "cors": "^2.8.5",
+    "eslint": "^7.32.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.26.0",
     "express": "^4.18.1",
     "helmet": "^6.0.0",
     "mongodb": "^4.10.0",
-    "nconf": "^0.12.0"
+    "nconf": "^0.12.0",
+    "winston": "^3.8.2"
   }
 }

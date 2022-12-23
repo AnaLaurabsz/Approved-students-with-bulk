@@ -1,4 +1,6 @@
 {
   "MONGODB_URI": "mongodb://localhost:27017/school",
-  "PORT": 8080
+  "PORT": 8080,
+  "INITIAL_INTERVAL": 2000,
+  "DELAY_INTERVAL": 20000
 }
